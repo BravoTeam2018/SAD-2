@@ -10,11 +10,7 @@ install:
 script:
 - ./mvnw test
 - ./mvnw clean install -B
-- ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar \
--  -Dsonar.projectKey=BravoTeam2018_SAD-2 \
--  -Dsonar.organization=bravoteam2018-1 \
--  -Dsonar.host.url=https://sonarcloud.io \
--  -Dsonar.login=46b04871e22210fffd6ddf2b6ae5c82c5a2d8a08
+- ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.projectKey=BravoTeam2018_SAD-2 -Dsonar.organization=bravoteam2018-1 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=46b04871e22210fffd6ddf2b6ae5c82c5a2d8a08
 env:
   global:
 before_install:
