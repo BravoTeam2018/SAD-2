@@ -13,6 +13,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class NotifierApplicationTests {
 
+    int delay = 50;
+
+
     @Value("${mqtt.broker.host}")
     public static String mqttBroker = "tcp://iot.eclipse.org:1883";//"tcp://ec2-52-91-20-33.compute-1.amazonaws.com:1883";//
 
@@ -35,7 +38,7 @@ public class NotifierApplicationTests {
             serviceTest();
         }
         try {
-            Thread.sleep(10000);
+            Thread.sleep(delay);
         } catch (Exception e){
             System.out.println("Could not sleep main");
         }
@@ -46,7 +49,7 @@ public class NotifierApplicationTests {
     public void multiPublishTestDelay(){
         try{
             multiPublishTest();
-            Thread.sleep(50000);
+            Thread.sleep(delay);
             multiPublishTest();
         }catch(Exception e){
             System.out.println("Could not sleep");
