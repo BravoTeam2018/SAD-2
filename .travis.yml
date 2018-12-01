@@ -1,7 +1,6 @@
 language: java
 email:
   recipients:
-  - anna.odziemczyk@mycit.ie
   - eamon.foy@mycit.ie
   - john.nolan1@mycit.ie
 jdk:
@@ -10,29 +9,28 @@ install:
 - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 script:
 - mvn test
-- ./mvnw clean install -B
-- ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+- "./mvnw clean install -B"
+- "./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar"
 env:
   global:
-  - secure: "S17xRU70GHdkAs9zJQt2HoUVK6x9b0gw3zxzW3Bcbldoybp/KdOYMVqki8XKwXuopNBMiHxZ+O5BGh9xwAuhiRTySEGMcZ4rpGNudVhH2r25VKhEFopBZ9/PtKmhPv7lyZDqV6ToP/OQ6Tm1xDi56cc2tXumIXZuYaE1ooQrYQUNoKrGugMVcjUsdFY7gRXJr9LmCNDK8Nj98hq1I8t8/TSYFDafsABz3t1qHQE7851O+Nz3aZ8U+y7DZxQ252yfCRqcsKbeqxrJWA20juvt6M69QcCwZHhgwWT7dGbRzNMllczaryaEYtGJoWCSs6tBY4Tjd2O4py4rfC7OaaIcdOUr8ZBFEGUnmtKmI27RHtBNhB1OWuqg2oW/jrDmcwhjHBl+20za0kdejCZzaEdwyRj1f4ocSf4dz0Md3co2JiRxYESx/Tc9QmXIdLBUS37TC6lzT+Ntl/yqVKL7dGIXK5+pykHGM9JRL0z7SQ/13xxIOkxFjswMIwod7R7ZkmT3FUN+TklhWTdFI3Krr+3DG9NZaFoMeAea/eNzww59eMKdc8eYiv0Pp1DdruWOC9dDoiLMFDGPfQ4CR7J0muxYo/A9Q5a0xltkHELGcrmr84scZT2GQcknMy4Rz5shLI6I50edNVQIQ4yKR/WDQTok7B7zCiHePv1sF2N3TWUtB04="
-
+  - secure: huQFfYFwbdZ5MpRgLIRjD8o9h1N1FSbpdUMSO7RjrUiGBs45BboAtjp5ZmWTPs1OXKYuMtcBDObDy2/9g0wFPQuhRpHwga6F0sQuLsVFNCh+fjKIbB8UqnBpisFV6YWrfFuzvo4fbme7UAxEfFeOyp8m3+IQ1ww7y8NYxkm3dbd9bD/aiw1CnS0cCpf3T5st1V/8/zqfgrre52M8BJmGPqzdVkxvcKn3958os03XfaZsXr6nNiSO/fv8dcT4yXc9tGZ4AjuDLD3umKV4ZsuloSQQPyHpk/TwumHgxrTBohB4qqqIxw9fuZ0BBaLjVzOCy5M9tOoGaDRymVz5JDtGvkl2OP+iIEgpL4uKYkQjLhQ+awwO81DtJy+L5rCZHKbirxGGta+IQUUQfV4GWuCA3w8gvNAJpu4yXK6k0c8ddEpgRnXCL5hSHa5iAZYkS4jFmdx/NqP7fqii6ftJDwECEEcu5rUel9NlgFxGwmCmegc2Pg1Xk4WqwaU4XK198dtQ0C1yLt/tmR6Q0M6SLeaD31V1ZsY+uCHHjDrAPpRVWTdsMXv/SCXDli7sLEVcAPwp149fJK2tnYK9D37dYZUmwBjjc2Oe+q3P4FKcWhshCzpHXiMZPL4yPGjqsOMwvoIBroqp5cLqe7SL9hKYklw/y/GtYwTlTq2ug5WQ/htU/7w=
 addons:
   sonarcloud:
-    organization: "team-bravo"
+    organization: citbravo2018
     token:
-      secure: $SONAR_TOKEN
+      secure: "$SONAR_TOKEN"
 before_install:
-  - chmod +x mvnw
+- chmod +x mvnw
 deploy:
   provider: cloudfoundry
   api: https://api.run.pivotal.io
-  username: anna.odziemczyk@mycit.ie
+  username: eamon.foy@mycit.ie
   password:
-    secure: itt/cgM7DDIGn6zKK04LT95hPFAn1Qg5FrP5oSa4q4JkDbLBzra4p8vYYZqOJjTdemS/MBkchauhSdXcPFRcntF6Ih6BU/uqKGO7frA2ce18zotTS/1VdJH0I7cjcFGXEGX9NhOLf+O7A/VOL3SrUw6U1NqGTA68UrQetI0nTEcidJXVuCNZBszGESegbiBqeqnH8hV28Xqi67ugT+QRF1v4kN40AsvVlL5PzzJJUPTsN1AOoH3tk76GhCMu4AW5X1JFWitp5SZs4QBvlhaEacb791FqNz7vg8FVoxeIWwj+Tq2CbC5vhqsJUXAbwOXeOtLpU9vuXKUmyFYIlOF+HCUf+GJn3uP3RoRvsucRACnNhKFtmN4wk4IdCQDkKHZJSDIuP9xOdANbgDdRUZQslhzi5U7w7mbB0fs5R1HLWe2aKryz9QVd8/3pC6zWHDQyyWEMoyNlUD1hQXVyRjXq7X6Nicp2YOoDjgQjwj8jvlan+G3czNBKr8I/tZKRfVkiLK4Usx2j/QIAYcJwKyiJOP/8jBfw5RkCoX7edB5usH9+IryF5n0zmEgr6mcr86E5Jd6/glku9JmJ/AMmT6feZo4P1SHOcR8GhGE/GdD+XrBlAdukGb/9ffIleMorhDRg0M0jfyU7Vd6R/xELGuLDC9HRso61dYnQ0MAJEj6o5Oc=
-  organization: anna.odziemczyk-org
-  space: development
+    secure: lbw8zN/hXZBxYdcopUcpt7fgt3ZHdNGwtJfg/3k8Sgikn1Q3Tk4agg5X0bGhQFHE67Xxe+4uhrKGUqXUEV4GIiJfHQ67L3PeHu4nU1Q6QzRGIBoN9nUpRNywBHMFSzfLZOgl5+6wt8rCSP7V9vgRjUbWxdBbG/VDuD0rAnMCtJiIGQhOz1gtukFq45y4OrHco/c9GC6DKMOn0bQTnuZe2wq3w7kk2LgbJ1DoSEwABXzOztnE1/+kf/Qio1HBZfKXbq5/Zc7oD/zGBPyl63uHO887bXiRW3q7d0cVCxjXD5B1IvjQkaD8YfFnyajow2qw4E/Qg9xhco3GrFsQQWKUSA4qKTETVs2CLVgCGwk12YXEyX30qJNRu200EHcjiWYISKtlmoKsB9qg47dtEy7TZ7WY2Xz4FJEz0mUT3F9p5RxK7I9NIzNWHn+FY5CeqMKBs/iECMq8N6TXi82omjkP87PBfbecfbKFreeSx6oMqXamR7CzdXC4CMJ3L2UQeVEIFAvO8DLlodHMmqjlW5YTXfR7riVM/iy+b94odYDrZ096Du1f7WupIxqoUWI+rjOpWSGKdcyiGVUmYeO3eLAJjLAl9xLCGww7OCLvVI69//9rDxLCD5M+4AbsdaDII5L3oZSkA3BKVRx/bW6FSllVUEDQ8kcB56Ewb+cnSWEuZW0=
+  organization: WeFixItInc.org
+  space: TeamBravo
   app: rfidclonespy
   skip_cleanup: true
   file: restapi/target/restapi-0.0.1-SNAPSHOT-exec.jar
   on:
-    repo: TeamBravo2018/rfid-clone-spy
+    repo: BravoTeam2018/SAD-2
