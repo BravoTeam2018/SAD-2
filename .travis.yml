@@ -8,17 +8,15 @@ jdk:
 install:
 - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 script:
-- mvn test
-- "./mvnw clean install -B"
-- "./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar"
+- ./mvnw test
+- ./mvnw clean install -B
+- ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar \
+-  -Dsonar.projectKey=BravoTeam2018_SAD-2 \
+-  -Dsonar.organization=bravoteam2018-1 \
+-  -Dsonar.host.url=https://sonarcloud.io \
+-  -Dsonar.login=46b04871e22210fffd6ddf2b6ae5c82c5a2d8a08
 env:
   global:
-  - secure: "huQFfYFwbdZ5MpRgLIRjD8o9h1N1FSbpdUMSO7RjrUiGBs45BboAtjp5ZmWTPs1OXKYuMtcBDObDy2/9g0wFPQuhRpHwga6F0sQuLsVFNCh+fjKIbB8UqnBpisFV6YWrfFuzvo4fbme7UAxEfFeOyp8m3+IQ1ww7y8NYxkm3dbd9bD/aiw1CnS0cCpf3T5st1V/8/zqfgrre52M8BJmGPqzdVkxvcKn3958os03XfaZsXr6nNiSO/fv8dcT4yXc9tGZ4AjuDLD3umKV4ZsuloSQQPyHpk/TwumHgxrTBohB4qqqIxw9fuZ0BBaLjVzOCy5M9tOoGaDRymVz5JDtGvkl2OP+iIEgpL4uKYkQjLhQ+awwO81DtJy+L5rCZHKbirxGGta+IQUUQfV4GWuCA3w8gvNAJpu4yXK6k0c8ddEpgRnXCL5hSHa5iAZYkS4jFmdx/NqP7fqii6ftJDwECEEcu5rUel9NlgFxGwmCmegc2Pg1Xk4WqwaU4XK198dtQ0C1yLt/tmR6Q0M6SLeaD31V1ZsY+uCHHjDrAPpRVWTdsMXv/SCXDli7sLEVcAPwp149fJK2tnYK9D37dYZUmwBjjc2Oe+q3P4FKcWhshCzpHXiMZPL4yPGjqsOMwvoIBroqp5cLqe7SL9hKYklw/y/GtYwTlTq2ug5WQ/htU/7w="
-addons:
-  sonarcloud:
-    organization: citbravo2018
-    token:
-      secure: $SONAR_TOKEN
 before_install:
 - chmod +x mvnw
 deploy:
@@ -33,4 +31,4 @@ deploy:
   skip_cleanup: true
   file: restapi/target/restapi-0.0.1-SNAPSHOT-exec.jar
   on:
-    repo: BravoTeam2018/SAD-2
+    repo: BravoTeam2018/SAD-2   
