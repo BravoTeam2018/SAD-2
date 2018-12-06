@@ -31,11 +31,11 @@ public class NotifierApplicationTests {
 
     @Test
     public void multiPublishTest(){
-        for (int j=0; j<40;j++) {
+        for (int j=0; j<1000;j++) {
             serviceTest();
         }
         try {
-            Thread.sleep(10000);
+            Thread.sleep(60000);
         } catch (Exception e){
             System.out.println("Could not sleep main");
         }

@@ -11,6 +11,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,11 +36,15 @@ public class NotifierService {
     public void publish(String alert){
         if (publisherAvailable()){
             publisher.publish(mqttTopic,alert);
-        }else{
+        }else if (list.size()<20){
             publisher = MqttPublish.createInstance();
             generateClientId();
             list.add(publisher);
             publisher.process(mqttBroker,mqttTopic,alert);
+        }else{
+            findSmallestList();
+            publisher.addToList(alert);
+            //sort the list by number of messages and add to the one with least messages
         }
     }
 
@@ -47,6 +52,11 @@ public class NotifierService {
         String generatedString = generateSafeToken();
         log.info(String.format("new client ID is: %s",generatedString));
         publisher.setClientId(generatedString);
+    }
+
+    private void findSmallestList(){
+        Collections.sort(list);
+        publisher = list.get(0);
     }
 
     private boolean publisherAvailable(){
@@ -64,14 +74,14 @@ public class NotifierService {
         }
         /*for (int i=0 ; i<list.size() ;i++){
             if (list.get(i).isPublishAvailable()){
-                if (log.isDebugEnabled()){
-                    log.debug("found a publisher");
-                }
-                publisher = list.get(i);
-                found = true;
-                break;
+            if (log.isDebugEnabled()){
+                log.debug("found a publisher");
             }
-        }*/
+            publisher = list.get(i);
+            found = true;
+            break;
+        }
+    }*/
         return found;
     }
 

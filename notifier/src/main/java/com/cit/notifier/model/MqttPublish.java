@@ -9,10 +9,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Async
 @Scope(value="prototype", proxyMode= ScopedProxyMode.TARGET_CLASS)
-public class MqttPublish implements IMqttPublish {
+public class MqttPublish implements IMqttPublish, Comparable<MqttPublish> {
 
     /**
      * Member Vars
@@ -28,6 +30,8 @@ public class MqttPublish implements IMqttPublish {
     private String userContext = "default";
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private boolean available;
+    private List<String> messageList = new ArrayList<>();
+
     /**
      * Getters/setters
      */
@@ -42,6 +46,10 @@ public class MqttPublish implements IMqttPublish {
     public String getClientId() { return clientId; }
 
     public void setClientId(String clientId) { this.clientId = clientId; }
+
+    public List<String> getMessageList() {
+        return messageList;
+    }
 
     /**
      * Constructors
@@ -87,24 +95,41 @@ public class MqttPublish implements IMqttPublish {
         }
     }
 
+    /**
+     * Boolean to check if connection to broker still exists
+     */
     @Override
     public boolean isConnected() {
         return (client != null) && (client.isConnected());
     }
 
-
+    /**
+     * Set the topic, try to connect, will rely on callbacks to publish
+     *
+     * @param mqttBroker the broker we use
+     * @param mqttTopic the topic to publish on
+     * @param mqttMessage the message to send
+     */
     public void process(String mqttBroker, String mqttTopic, String mqttMessage){
         connect(mqttBroker);
         this.topic = mqttTopic;
         this.message = mqttMessage;
     }
 
+    /**
+     * Called if connection is lost
+     */
     @Override
     public void connectionLost(Throwable cause) {
         // The MQTT client lost the connection
         log.error("Threw an Exception in MqttPublish::connectionLost, full stack trace follows:",cause);
     }
 
+    /**
+     * Called if on success, used to verify connection completes
+     *
+     * @param asyncActionToken deliverytoken, verification from broker
+     */
     @Override
     public void onSuccess(IMqttToken asyncActionToken) {
         if (asyncActionToken.equals(connectToken)) {
@@ -118,6 +143,9 @@ public class MqttPublish implements IMqttPublish {
         }
     }
 
+    /**
+     * used to check if delivery is complete and instance is connected
+     */
     public boolean isPublishAvailable(){
         return isConnected() && available;
     }
@@ -164,6 +192,11 @@ public class MqttPublish implements IMqttPublish {
         }
     }
 
+    /**
+     * Called if delivery fails
+     *
+     * @param asyncActionToken token, verification from broker
+     */
     @Override
     public void onFailure(IMqttToken asyncActionToken, Throwable exception)
     {
@@ -203,6 +236,32 @@ public class MqttPublish implements IMqttPublish {
             log.info("delivery complete");
         }
         available = true;
+        if (messageList.size()>0){
+            String text = messageList.remove(0);
+            publish(topic,text);
+        }
     }
 
+    /**
+     * Add a message to the queue
+     */
+    public void addToList(String alert){
+        messageList.add(alert);
+    }
+
+    /**
+     * Used to check which instance has the least messages queued
+     *
+     * @param other the instance to compare to
+     */
+    @Override
+    public int compareTo(MqttPublish other) {
+        if (this.getMessageList().size() < other.getMessageList().size()) {
+            return -1;
+        }
+        if (this.getMessageList().size() == other.getMessageList().size()) {
+            return 0;
+        }
+        return 1;
+    }
 }
