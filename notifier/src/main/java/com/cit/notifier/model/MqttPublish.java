@@ -12,7 +12,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Async
 @Scope(value="prototype", proxyMode= ScopedProxyMode.TARGET_CLASS)
 public class MqttPublish implements IMqttPublish, Comparable<MqttPublish> {
 
