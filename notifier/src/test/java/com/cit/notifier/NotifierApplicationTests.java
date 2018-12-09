@@ -26,12 +26,20 @@ public class NotifierApplicationTests {
 	@Test
     public void serviceTest(){
 	    notifier.publish("test");
+	    try {
+	        Thread.sleep(10000);
+        }catch (Exception e){
+
+        }finally {
+
+        }
+
     }
 
 
     @Test
     public void multiPublishTest(){
-        for (int j=0; j<1000;j++) {
+        for (int j=0; j<100;j++) {
             serviceTest();
         }
         try {

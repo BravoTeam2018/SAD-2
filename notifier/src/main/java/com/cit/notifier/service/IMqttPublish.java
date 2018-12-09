@@ -1,4 +1,4 @@
-package com.cit.notifier.model;
+package com.cit.notifier.service;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.MqttCallback;

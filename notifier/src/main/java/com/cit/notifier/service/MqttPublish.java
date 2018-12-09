@@ -1,12 +1,12 @@
-package com.cit.notifier.model;
+package com.cit.notifier.service;
 
+import com.cit.notifier.config.GenerateId;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.scheduling.annotation.Async;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ public class MqttPublish implements IMqttPublish, Comparable<MqttPublish> {
     private static final String ENCODING = "UTF-8";
     private String name;
     private String clientId = null;
+    private String mqttBroker;
     private MqttAsyncClient client;
     private MemoryPersistence memoryPersistence;
     private IMqttToken connectToken;
@@ -72,12 +73,13 @@ public class MqttPublish implements IMqttPublish, Comparable<MqttPublish> {
     @Override
     public void connect(String broker)
     {
+        mqttBroker = broker;
         try {
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
             memoryPersistence = new MemoryPersistence();
             if (this.clientId == null){
-                this.clientId = MqttAsyncClient.generateClientId();
+                this.clientId = GenerateId.generateClientId();
                 if (log.isDebugEnabled()){
                     log.debug("Had to set clientID using generateClient");
                 }
@@ -109,6 +111,7 @@ public class MqttPublish implements IMqttPublish, Comparable<MqttPublish> {
      * @param mqttTopic the topic to publish on
      * @param mqttMessage the message to send
      */
+
     public void process(String mqttBroker, String mqttTopic, String mqttMessage){
         connect(mqttBroker);
         this.topic = mqttTopic;
@@ -122,6 +125,8 @@ public class MqttPublish implements IMqttPublish, Comparable<MqttPublish> {
     public void connectionLost(Throwable cause) {
         // The MQTT client lost the connection
         log.error("Threw an Exception in MqttPublish::connectionLost, full stack trace follows:",cause);
+        clientId = null;
+        connect(mqttBroker);
     }
 
     /**
@@ -199,6 +204,9 @@ public class MqttPublish implements IMqttPublish, Comparable<MqttPublish> {
     @Override
     public void onFailure(IMqttToken asyncActionToken, Throwable exception)
     {
+        if (asyncActionToken.equals(connectToken)){
+            log.error("Connection refused, check broker");
+        }
         log.error("Threw an Exception in MqttPublish::onFailure, full stack trace follows:",exception);
     }
 

@@ -1,6 +1,5 @@
 package com.cit.notifier.service;
 
-import com.cit.notifier.model.MqttPublish;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +33,10 @@ public class NotifierService {
     private List<MqttPublish> list = new ArrayList<>();
 
     public void publish(String alert){
-        if (publisherAvailable()){
+        if (findAvailablepublisher()){
             publisher.publish(mqttTopic,alert);
         }else if (list.size()<20){
             publisher = MqttPublish.createInstance();
-            generateClientId();
             list.add(publisher);
             publisher.process(mqttBroker,mqttTopic,alert);
         }else{
@@ -48,48 +46,34 @@ public class NotifierService {
         }
     }
 
-    private void generateClientId(){
-        String generatedString = generateSafeToken();
-        log.info(String.format("new client ID is: %s",generatedString));
-        publisher.setClientId(generatedString);
-    }
 
     private void findSmallestList(){
         Collections.sort(list);
         publisher = list.get(0);
     }
 
-    private boolean publisherAvailable(){
+    private boolean findAvailablepublisher(){
         boolean found = false;
         log.info(String.valueOf(list.size()));
-        for (MqttPublish i:list) {
-            if (i.isPublishAvailable()){
+        for (MqttPublish mqttPublish:list) {
+            if (mqttPublish.isPublishAvailable()){
                 if (log.isDebugEnabled()){
                     log.debug("found a publisher");
                 }
-                publisher = i;
+                publisher = mqttPublish;
                 found = true;
                 break;
             }
         }
-        /*for (int i=0 ; i<list.size() ;i++){
-            if (list.get(i).isPublishAvailable()){
-            if (log.isDebugEnabled()){
-                log.debug("found a publisher");
-            }
-            publisher = list.get(i);
-            found = true;
-            break;
-        }
-    }*/
         return found;
     }
-
-    private String generateSafeToken() {
-        SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[15];
-        random.nextBytes(bytes);
-        Encoder encoder = Base64.getUrlEncoder().withoutPadding();
-        return encoder.encodeToString(bytes);
+    // prototype objects, need to clear if they are not connected, how to handle?
+    private void cleanList(){
+        for (MqttPublish mqttPublish:list){
+            if (!mqttPublish.isConnected()){
+                mqttPublish = null;
+                list.remove(mqttPublish);
+            }
+        }
     }
 }
